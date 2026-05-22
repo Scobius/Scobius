@@ -1,0 +1,6 @@
+@Scobius.API_HostAddress = http://localhost:5089
+
+GET {{Scobius.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Scobius.API/Scobius.API.csproj" />
+  <Project Path="Scobius.Core/Scobius.Core.csproj" />
+  <Project Path="Scobius.Infrastructure/Scobius.Infrastructure.csproj" />
+</Solution>
