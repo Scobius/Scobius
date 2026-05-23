@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Scobius.Core.Entities;
+using Scobius.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

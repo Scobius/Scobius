@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 
+namespace Scobius.Core.Entities;
+
 public class AppUser : IdentityUser
 {
     public string DisplayName { get; set; } = string.Empty;
