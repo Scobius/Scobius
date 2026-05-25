@@ -8,6 +8,7 @@ using Scobius.Core.Interfaces;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Resend;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +74,15 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
+builder.Services.AddOptions();
+builder.Services.AddHttpClient<ResendClient>();
+builder.Services.Configure<ResendClientOptions>(o =>
+{
+    o.ApiToken = builder.Configuration["Resend:ApiKey"]!;
+});
+builder.Services.AddTransient<IResend, ResendClient>();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
@@ -90,5 +100,4 @@ app.MapSwagger();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.Run();
+app.Run(builder.Configuration["App:BaseUrl"]);

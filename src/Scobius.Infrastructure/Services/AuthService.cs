@@ -9,6 +9,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Scobius.Infrastructure.Services;
 
@@ -17,15 +18,18 @@ public class AuthService : IAuthService
     private readonly UserManager<AppUser> _userManager;
     private readonly AppDbContext _db;
     private readonly IConfiguration _config;
+    private readonly IEmailService _emailService;
 
-    public AuthService(UserManager<AppUser> userManager, AppDbContext db, IConfiguration config)
+    public AuthService(UserManager<AppUser> userManager, AppDbContext db, IConfiguration config, IEmailService email)
     {
         _userManager = userManager;
         _db = db;
         _config = config;
+        _emailService = email;
     }
 
-    public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
+
+    public async Task<string> RegisterAsync(RegisterRequest request)
     {
         var user = new AppUser
         {
@@ -38,6 +42,29 @@ public class AuthService : IAuthService
         if (!result.Succeeded)
             throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
 
+        // Generate email confirmation token
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+        var confirmationLink = $"{_config["App:BaseUrl"]}/api/auth/verify-email?userId={user.Id}&token={encodedToken}";
+
+        await _emailService.SendEmailVerificationAsync(user.Email!, user.DisplayName, confirmationLink);
+
+        // Don't return tokens yet — user must verify email first
+        return "Registration successful. Please check your email to verify your account.";
+    }
+
+    public async Task<AuthResponse> VerifyEmailAsync(string userId, string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId)
+            ?? throw new Exception("User not found");
+
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+
+        if (!result.Succeeded)
+            throw new Exception("Invalid or expired verification token");
+
+        // Email confirmed — now issue tokens
         return await GenerateTokensAsync(user);
     }
 
@@ -48,6 +75,9 @@ public class AuthService : IAuthService
 
         if (!await _userManager.CheckPasswordAsync(user, request.Password))
             throw new Exception("Invalid credentials");
+
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+            throw new Exception("Please verify your email before logging in");
 
         return await GenerateTokensAsync(user);
     }

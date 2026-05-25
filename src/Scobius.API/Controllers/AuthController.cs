@@ -20,11 +20,27 @@ public class AuthController : ControllerBase
         {
 
             var result = await _auth.RegisterAsync(request);
+            return Ok(new { result });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromQuery] string userId, [FromQuery] string token)
+    {
+        try
+        {
+
+            var result = await _auth.VerifyEmailAsync(userId, token);
             return Ok(result);
         }
         catch (Exception e)
         {
             return BadRequest(e.Message);
+
         }
     }
 
