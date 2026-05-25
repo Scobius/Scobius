@@ -10,8 +10,20 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<FriendRequest> friendRequests => Set<FriendRequest>();
     public DbSet<Friendship> friendships => Set<Friendship>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
         => base.OnModelCreating(builder);
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<BaseEntity>()
+            .Where(e => e.State == EntityState.Modified);
+
+        foreach (var entry in entries)
+            entry.Entity.UpdatedAt = DateTime.UtcNow;
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 }

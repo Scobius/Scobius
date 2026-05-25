@@ -8,5 +8,6 @@ public class AppUser : IdentityUser
     public string? AvatarUrl { get; set; }
     public string? Bio { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
     public DateTime? LastSeenAt { get; set; }
 }
