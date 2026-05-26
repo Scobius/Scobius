@@ -85,6 +85,17 @@ builder.Services.AddTransient<IResend, ResendClient>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFriendshipService, FriendshipService>();
+builder.Services.AddScoped<IFileService, SupabaseFileService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+// Supabase Configuration
+var supabaseUrl = builder.Configuration["Supabase:Url"]!;
+var supabaseKey = builder.Configuration["Supabase:Key"]!;
+builder.Services.AddSingleton(_ => new Supabase.Client(supabaseUrl, supabaseKey, new Supabase.SupabaseOptions
+{
+    AutoRefreshToken = true,
+    AutoConnectRealtime = true
+}));
 
 var app = builder.Build();
 
