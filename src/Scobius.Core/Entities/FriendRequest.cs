@@ -2,8 +2,8 @@
 
 public class FriendRequest : BaseEntity
 {
-    public string SenderId { get; set; }
-    public string ReceiverId { get; set; }
+    public required string SenderId { get; set; }
+    public required string ReceiverId { get; set; }
     public DateTime SentAt { get; set; } = DateTime.UtcNow;
 
     public AppUser Sender { get; set; } = null!;

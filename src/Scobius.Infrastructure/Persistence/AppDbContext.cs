@@ -14,7 +14,35 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
 
     protected override void OnModelCreating(ModelBuilder builder)
-        => base.OnModelCreating(builder);
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Friendship>(entity =>
+        {
+            entity.HasOne(f => f.User1)
+                .WithMany()
+                .HasForeignKey(f => f.User1Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(f => f.User2)
+                .WithMany()
+                .HasForeignKey(f => f.User2Id)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<FriendRequest>(entity =>
+        {
+            entity.HasOne(fr => fr.Sender)
+                .WithMany()
+                .HasForeignKey(fr => fr.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(fr => fr.Receiver)
+                .WithMany()
+                .HasForeignKey(fr => fr.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
