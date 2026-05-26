@@ -14,15 +14,13 @@ public class SupabaseFileService : IFileService
 
     public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType, string bucketName)
     {
-        // Supabase-csharp Storage.Upload can take a Stream, but let's ensure it's at the beginning
-        if (fileStream.CanSeek)
-        {
-            fileStream.Seek(0, SeekOrigin.Begin);
-        }
+        using var memoryStream = new MemoryStream();
+        await fileStream.CopyToAsync(memoryStream);
+        var bytes = memoryStream.ToArray();
 
         await _supabase.Storage
             .From(bucketName)
-            .Upload(fileStream, fileName, new Supabase.Storage.FileOptions { ContentType = contentType, Upsert = true });
+            .Upload(bytes, fileName, new Supabase.Storage.FileOptions { ContentType = contentType, Upsert = true });
 
         return _supabase.Storage
             .From(bucketName)
