@@ -2,4 +2,5 @@
   <Project Path="Scobius.API/Scobius.API.csproj" />
   <Project Path="Scobius.Core/Scobius.Core.csproj" />
   <Project Path="Scobius.Infrastructure/Scobius.Infrastructure.csproj" />
+  <Project Path="Scobius.Web/Scobius.Web.csproj" />
 </Solution>
