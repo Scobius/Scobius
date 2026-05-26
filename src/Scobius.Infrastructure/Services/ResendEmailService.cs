@@ -4,12 +4,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace Scobius.Infrastructure.Services;
 
-public class EmailService : IEmailService
+public class ResendEmailService : IEmailService
 {
     private readonly IResend _client;
     private readonly IConfiguration _config;
 
-    public EmailService(IConfiguration config, IResend resend)
+    public ResendEmailService(IConfiguration config, IResend resend)
     {
         _config = config;
         _client = resend;

@@ -70,7 +70,8 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email)
+        var user = await _userManager.FindByEmailAsync(request.EmailOrUsername)
+            ?? await _userManager.FindByNameAsync(request.EmailOrUsername)
             ?? throw new Exception("Invalid credentials");
 
         if (!await _userManager.CheckPasswordAsync(user, request.Password))

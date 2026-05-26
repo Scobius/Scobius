@@ -18,7 +18,7 @@ This repository is for the Backend service
 - Database: PostgreSQL with Entity Framework Core (Supabase used for development)
 - Real-time: ASP.NET Core SignalR
 - Storage: Supabase Storage (for avatars and attachments)
-- Email: Resend (for account verification)
+- Email: Resend (for account verification) & Mailpit (for local development)
 - Authentication: ASP.NET Core Identity with JWT and Refresh Tokens
 
 ## Features
