@@ -7,8 +7,8 @@ using Scobius.Infrastructure.Services;
 using Scobius.Core.Interfaces;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Resend;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +56,7 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -109,6 +110,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapSwagger();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
