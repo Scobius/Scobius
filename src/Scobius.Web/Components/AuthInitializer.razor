@@ -1,0 +1,10 @@
+@rendermode InteractiveServer
+@inject ScobiusAuthStateProvider AuthProvider
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await AuthProvider.InitializeAsync();
+    }
+}

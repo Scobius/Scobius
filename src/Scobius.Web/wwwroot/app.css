@@ -58,3 +58,21 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* Base UI additions for shell + auth */
+.avatar {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid #dee2e6;
+}
+
+.auth-card {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.sidebar .nav-link {
+    font-size: 0.9rem;
+}

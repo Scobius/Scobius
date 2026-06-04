@@ -1,0 +1,39 @@
+@inherits LayoutComponentBase
+
+<div class="public-layout">
+    <header class="public-header py-3 border-bottom">
+        <div class="container d-flex align-items-center">
+            <a href="/" class="navbar-brand fw-bold text-decoration-none">Scobius</a>
+            <small class="text-muted ms-2 d-none d-sm-inline">Real-time chat</small>
+        </div>
+    </header>
+
+    <main class="public-main d-flex align-items-center justify-content-center">
+        <div class="container" style="max-width: 480px;">
+            @Body
+        </div>
+    </main>
+
+    <footer class="text-center text-muted small py-3">
+        &copy; @DateTime.UtcNow.Year Scobius
+    </footer>
+</div>
+
+<style>
+    .public-layout {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #f8f9fa;
+    }
+    .public-header {
+        background: white;
+    }
+    .public-main {
+        flex: 1;
+    }
+    .public-layout .card {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        border: 1px solid #eee;
+    }
+</style>

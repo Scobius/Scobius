@@ -1,29 +1,44 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Scobius.Web</a>
-    </div>
-</div>
+@* Clean vertical nav for the authenticated sidebar. No dark gradient or old toggler. *@
+@inject IWebAuthService AuthService
+@inject ScobiusAuthStateProvider AuthProvider
+@inject NavigationManager Navigation
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+<nav class="nav flex-column small">
+    <AuthorizeView>
+        <Authorized>
+            <NavLink class="nav-link d-flex align-items-center gap-2 py-2 px-2 rounded" href="/" Match="NavLinkMatch.All">
+                <span>🏠</span> Home
             </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link d-flex align-items-center gap-2 py-2 px-2 rounded" href="/profile">
+                <span>👤</span> Profile
             </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+            <NavLink class="nav-link d-flex align-items-center gap-2 py-2 px-2 rounded" href="/friends">
+                <span>👥</span> Friends
             </NavLink>
-        </div>
-    </nav>
-</div>
+
+            <div class="mt-2 pt-2 border-top">
+                <button class="btn btn-link nav-link text-start w-100 p-0 py-2 px-2 text-danger" @onclick="Logout">
+                    Logout
+                </button>
+            </div>
+        </Authorized>
+
+        <NotAuthorized>
+            <NavLink class="nav-link d-flex align-items-center gap-2 py-2 px-2 rounded" href="/login">
+                Login
+            </NavLink>
+            <NavLink class="nav-link d-flex align-items-center gap-2 py-2 px-2 rounded" href="/register">
+                Register
+            </NavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</nav>
+
+@code {
+    private async Task Logout()
+    {
+        try { await AuthService.LogoutAsync(); } catch { }
+        Navigation.NavigateTo("/login", forceLoad: true);
+    }
+}
+

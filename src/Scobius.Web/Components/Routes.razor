@@ -1,6 +1,47 @@
-﻿<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+﻿@rendermode InteractiveServer
+@inject ScobiusAuthStateProvider AuthProvider
+@implements IDisposable
+
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)"/>
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                @* Only redirect once the provider has finished reading storage.
+                   During the pre-init window, show nothing — avoids the flash redirect. *@
+                @if (isInitialized)
+                {
+                    <RedirectToLogin />
+                }
+            </NotAuthorized>
+            <Authorizing>
+                @* Shown while auth state is being determined *@
+                <div class="d-flex justify-content-center align-items-center vh-100">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+            </Authorizing>
+        </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1"/>
     </Found>
 </Router>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private bool isInitialized;
+
+    protected override void OnInitialized()
+    {
+        AuthProvider.Initialized += OnAuthInitialized;
+        // If InitializeAsync already completed before this component mounted
+        isInitialized = AuthProvider.IsInitialized;
+    }
+
+    private void OnAuthInitialized()
+    {
+        isInitialized = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => AuthProvider.Initialized -= OnAuthInitialized;
+}

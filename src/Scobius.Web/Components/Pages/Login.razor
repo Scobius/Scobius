@@ -1,0 +1,94 @@
+﻿@page "/login"
+@layout PublicLayout
+@rendermode InteractiveServer
+@inject IWebAuthService AuthService
+@inject NavigationManager Navigation
+@attribute [AllowAnonymous]
+
+<PageTitle>Login — Scobius</PageTitle>
+
+<div class="auth-card">
+  <div class="card shadow-sm p-4">
+    <h3 class="mb-1 fw-bold">Welcome back</h3>
+    <p class="text-muted mb-4">Sign in to your Scobius account</p>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+      <div class="alert alert-danger py-2">@errorMessage</div>
+    }
+
+    @* No [SupplyParameterFromForm] — EditForm handled interactively *@
+    <EditForm Model="model" OnValidSubmit="HandleLogin">
+      <DataAnnotationsValidator />
+      <ValidationSummary />
+
+      <div class="mb-3">
+        <label class="form-label">Email or Username</label>
+        <InputText class="form-control" @bind-Value="model!.EmailOrUsername" placeholder="you@example.com" />
+        <ValidationMessage For="() => model.EmailOrUsername" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <InputText type="password" class="form-control" @bind-Value="model.Password" placeholder="••••••••" />
+        <ValidationMessage For="() => model.Password" />
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" disabled="@isLoading">
+        @if (isLoading)
+        {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+        }
+        Sign In
+      </button>
+    </EditForm>
+
+    <hr />
+    <p class="text-center text-muted small mb-0">
+      Don't have an account? <a href="/register">Register</a>
+    </p>
+  </div>
+</div>
+
+@code {
+  private LoginModel model = new();
+  private string? errorMessage;
+  private bool isLoading;
+
+  [SupplyParameterFromQuery]
+  public string? ReturnUrl { get; set; }
+
+  private async Task HandleLogin()
+  {
+    isLoading = true;
+    errorMessage = null;
+
+    try
+    {
+      // WebAuthService.LoginAsync already calls SetTokenAsync internally — don't call it again here
+      var result = await AuthService.LoginAsync(model.EmailOrUsername, model.Password);
+
+      if (result.Success)
+        Navigation.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? "/" : ReturnUrl);
+      else
+        errorMessage = "Invalid email/username or password.";
+    }
+    catch
+    {
+      errorMessage = "Something went wrong. Please try again.";
+    }
+    finally
+    {
+      isLoading = false;
+    }
+  }
+
+  private class LoginModel
+  {
+    [System.ComponentModel.DataAnnotations.Required]
+    public string EmailOrUsername { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string Password { get; set; } = string.Empty;
+  }
+}

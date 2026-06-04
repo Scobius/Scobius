@@ -1,7 +1,26 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@attribute [Authorize]
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Scobius</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<div>
+    <h2>Welcome back 👋</h2>
+    <p class="text-muted">Select a conversation or find a friend to start chatting.</p>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center p-4">
+                <h5>Friends</h5>
+                <p class="text-muted small">Manage your friends list</p>
+                <a href="/friends" class="btn btn-primary btn-sm">View Friends</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center p-4">
+                <h5>Profile</h5>
+                <p class="text-muted small">Update your profile</p>
+                <a href="/profile" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>

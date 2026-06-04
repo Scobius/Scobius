@@ -1,0 +1,128 @@
+﻿@page "/register"
+@layout PublicLayout
+@inject IWebAuthService AuthService
+@inject NavigationManager Navigation
+@attribute [AllowAnonymous]
+
+<PageTitle>Register — Scobius</PageTitle>
+
+<div class="auth-card">
+  <div class="card shadow-sm p-4">
+    <h3 class="mb-1 fw-bold">Create account</h3>
+    <p class="text-muted mb-4">Join Scobius today</p>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+      <div class="alert alert-success">
+        @successMessage
+      </div>
+      <div class="text-center">
+        <a href="/login" class="btn btn-primary">Go to login</a>
+      </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+      <div class="alert alert-danger py-2">@errorMessage</div>
+    }
+
+    @if (string.IsNullOrEmpty(successMessage))
+    {
+      <EditForm FormName="registerForm" Model="model" OnValidSubmit="HandleRegister">
+        <DataAnnotationsValidator />
+
+        <ValidationSummary />
+
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <InputText class="form-control" @bind-Value="model.Username" placeholder="john_doe" />
+          <ValidationMessage For="() => model.Username" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Display Name</label>
+          <InputText class="form-control" @bind-Value="model.DisplayName" placeholder="John Doe" />
+          <ValidationMessage For="() => model.DisplayName" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <InputText type="email" class="form-control" @bind-Value="model.Email" placeholder="you@example.com" />
+          <ValidationMessage For="() => model.Email" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <InputText type="password" class="form-control" @bind-Value="model.Password" placeholder="••••••••" />
+          <ValidationMessage For="() => model.Password" />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" disabled="@isLoading">
+          @if (isLoading)
+          {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+          }
+          Create Account
+        </button>
+      </EditForm>
+
+      <hr />
+      <p class="text-center text-muted small mb-0">
+        Already have an account?
+        <a href="/login">Sign in</a>
+      </p>
+    }
+  </div>
+</div>
+
+@code {
+  [SupplyParameterFromForm]
+  private RegisterModel? model { get; set; }
+  private string? successMessage;
+  private string? errorMessage;
+  private bool isLoading;
+
+  protected override void OnInitialized() => model ??= new();
+
+  private async Task HandleRegister()
+  {
+    isLoading = true;
+    errorMessage = null;
+
+    try
+    {
+      await AuthService.RegisterAsync(
+          model.Username,
+          model.DisplayName,
+          model.Email,
+          model.Password);
+
+      successMessage = "Account created! Check your email to verify your account before logging in.";
+    }
+    catch (Exception ex)
+    {
+      errorMessage = ex.Message;
+    }
+    finally
+    {
+      isLoading = false;
+    }
+  }
+
+  private class RegisterModel
+  {
+    [System.ComponentModel.DataAnnotations.Required]
+    public string Username { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    public string DisplayName { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    [System.ComponentModel.DataAnnotations.Required]
+    [System.ComponentModel.DataAnnotations.MinLength(8)]
+    public string Password { get; set; } = string.Empty;
+  }
+}

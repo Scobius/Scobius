@@ -1,0 +1,56 @@
+@inject NavigationManager Navigation
+@inject ScobiusAuthStateProvider AuthProvider
+
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 40vh;">
+    <div class="spinner-border text-primary mb-3" role="status"></div>
+    <p class="text-muted">Checking your session…</p>
+</div>
+
+@code {
+    private bool _redirected;
+
+    protected override void OnInitialized()
+    {
+        AuthProvider.Initialized += OnAuthInitialized;
+        AuthProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+
+        // If the provider is already initialized by the time this component renders,
+        // decide immediately.
+        if (AuthProvider.IsInitialized)
+        {
+            _ = DecideRedirect();
+        }
+    }
+
+    private async Task DecideRedirect()
+    {
+        if (_redirected) return;
+
+        var state = await AuthProvider.GetAuthenticationStateAsync();
+        bool isAuth = state.User.Identity?.IsAuthenticated ?? false;
+
+        if (!isAuth && AuthProvider.IsInitialized)
+        {
+            _redirected = true;
+            // Use forceLoad to avoid any lingering authorized layout state
+            Navigation.NavigateTo("/login", forceLoad: true);
+        }
+    }
+
+    private void OnAuthInitialized()
+    {
+        InvokeAsync(DecideRedirect);
+    }
+
+    private void OnAuthenticationStateChanged(Task<AuthenticationState> _)
+    {
+        InvokeAsync(DecideRedirect);
+    }
+
+    public void Dispose()
+    {
+        AuthProvider.Initialized -= OnAuthInitialized;
+        AuthProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}
+

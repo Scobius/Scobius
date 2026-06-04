@@ -1,19 +1,58 @@
 ﻿@inherits LayoutComponentBase
+@inject ScobiusAuthStateProvider AuthProvider
+@inject IWebAuthService AuthService
+@inject NavigationManager Navigation
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+<div class="app-shell">
+    <!-- Top navbar -->
+    <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/">Scobius</a>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <div class="d-flex align-items-center gap-3 ms-auto">
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-2"
+                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="small">Account</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <button class="dropdown-item text-danger" @onclick="Logout">Logout</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="/login" class="btn btn-sm btn-outline-primary">Sign in</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
         </div>
+    </nav>
 
-        <article class="content px-4">
+    <div class="app-body d-flex">
+        <!-- Left sidebar (chat-app ready) -->
+        <aside class="sidebar border-end bg-light p-3 d-none d-md-flex flex-column" style="width: 240px; min-height: calc(100vh - 56px);">
+            <NavMenu />
+
+            <div class="mt-auto pt-3 border-top small text-muted">
+                <div class="fw-semibold mb-1">Friends</div>
+                <div class="text-muted" style="font-size: 0.8rem;">
+                    Connect with friends to start chatting.
+                </div>
+                <a href="/friends" class="small">View friends →</a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-grow-1 p-3 p-md-4">
             @Body
-        </article>
-    </main>
+        </main>
+    </div>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
@@ -21,3 +60,17 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private async Task Logout()
+    {
+        try
+        {
+            await AuthService.LogoutAsync();
+        }
+        catch { /* best effort */ }
+
+        Navigation.NavigateTo("/login", forceLoad: true);
+    }
+}
+

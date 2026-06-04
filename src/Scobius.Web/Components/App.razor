@@ -15,7 +15,12 @@
 </head>
 
 <body>
-<Routes/>
+<CascadingAuthenticationState>
+    @* AuthInitializer must render BEFORE Routes so the token is loaded
+       before AuthorizeRouteView evaluates the auth state. *@
+    <AuthInitializer />
+    <Routes/>
+</CascadingAuthenticationState>
 <ReconnectModal/>
 <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
