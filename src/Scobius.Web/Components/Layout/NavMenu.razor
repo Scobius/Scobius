@@ -3,31 +3,31 @@
 @inject ScobiusAuthStateProvider AuthProvider
 @inject NavigationManager Navigation
 
-<nav class="flex flex-col space-y-1 text-sm">
+<nav class="flex flex-col space-y-1">
     <AuthorizeView>
         <Authorized>
-            <NavLink class="flex items-center gap-2 py-2 px-3 rounded-md transition-colors hover:bg-gray-100 text-gray-700 [&.active]:bg-blue-50 [&.active]:text-blue-600" href="/" Match="NavLinkMatch.All">
-                <span class="w-5">🏠</span> Home
+            <NavLink class="nav-item nav-item-inactive [&.active]:nav-item-active" href="/" Match="NavLinkMatch.All">
+                <span class="w-5 text-center">🏠</span> Home
             </NavLink>
-            <NavLink class="flex items-center gap-2 py-2 px-3 rounded-md transition-colors hover:bg-gray-100 text-gray-700 [&.active]:bg-blue-50 [&.active]:text-blue-600" href="/profile">
-                <span class="w-5">👤</span> Profile
+            <NavLink class="nav-item nav-item-inactive [&.active]:nav-item-active" href="/profile">
+                <span class="w-5 text-center">👤</span> Profile
             </NavLink>
-            <NavLink class="flex items-center gap-2 py-2 px-3 rounded-md transition-colors hover:bg-gray-100 text-gray-700 [&.active]:bg-blue-50 [&.active]:text-blue-600" href="/friends">
-                <span class="w-5">👥</span> Friends
+            <NavLink class="nav-item nav-item-inactive [&.active]:nav-item-active" href="/friends">
+                <span class="w-5 text-center">👥</span> Friends
             </NavLink>
 
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <button class="flex items-center gap-2 w-full py-2 px-3 rounded-md text-left text-red-600 transition-colors hover:bg-red-50" @onclick="Logout">
-                    <span class="w-5">🚪</span> Logout
+            <div class="mt-4 pt-4 border-t border-gray-100">
+                <button class="nav-item w-full text-red-600 hover:bg-red-50 transition-colors" @onclick="Logout">
+                    <span class="w-5 text-center">🚪</span> Logout
                 </button>
             </div>
         </Authorized>
 
         <NotAuthorized>
-            <NavLink class="flex items-center gap-2 py-2 px-3 rounded-md transition-colors hover:bg-gray-100 text-gray-700" href="/login">
+            <NavLink class="nav-item nav-item-inactive" href="/login">
                 Login
             </NavLink>
-            <NavLink class="flex items-center gap-2 py-2 px-3 rounded-md transition-colors hover:bg-gray-100 text-gray-700" href="/register">
+            <NavLink class="nav-item nav-item-inactive" href="/register">
                 Register
             </NavLink>
         </NotAuthorized>

@@ -24,7 +24,7 @@
           </div>
           <h3 class="text-lg font-bold text-green-900 mb-2">Success!</h3>
           <p class="text-sm text-green-700 mb-6">@successMessage</p>
-          <a href="/login" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-green-500/20">
+          <a href="/login" class="btn-primary bg-green-600 hover:bg-green-700 shadow-green-500/20">
             Go to login
           </a>
         </div>
@@ -45,43 +45,39 @@
 
           <div class="grid grid-cols-1 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-              <InputText class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
-                         @bind-Value="model.Username" placeholder="john_doe" />
+              <label class="label">Username</label>
+              <InputText class="input" @bind-Value="model.Username" placeholder="john_doe" />
               <div class="mt-1 text-xs text-red-600">
                 <ValidationMessage For="() => model.Username" />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
-              <InputText class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
-                         @bind-Value="model.DisplayName" placeholder="John Doe" />
+              <label class="label">Display Name</label>
+              <InputText class="input" @bind-Value="model.DisplayName" placeholder="John Doe" />
               <div class="mt-1 text-xs text-red-600">
                 <ValidationMessage For="() => model.DisplayName" />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <InputText type="email" class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
-                         @bind-Value="model.Email" placeholder="you@example.com" />
+              <label class="label">Email</label>
+              <InputText type="email" class="input" @bind-Value="model.Email" placeholder="you@example.com" />
               <div class="mt-1 text-xs text-red-600">
                 <ValidationMessage For="() => model.Email" />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <InputText type="password" class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
-                         @bind-Value="model.Password" placeholder="••••••••" />
+              <label class="label">Password</label>
+              <InputText type="password" class="input" @bind-Value="model.Password" placeholder="••••••••" />
               <div class="mt-1 text-xs text-red-600">
                 <ValidationMessage For="() => model.Password" />
               </div>
             </div>
           </div>
 
-          <button type="submit" class="w-full flex justify-center items-center py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-500/20 mt-4 disabled:opacity-50 disabled:cursor-not-allowed" disabled="@isLoading">
+          <button type="submit" class="btn-primary w-full mt-4" disabled="@isLoading">
             @if (isLoading)
             {
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">

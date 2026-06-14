@@ -37,8 +37,7 @@
   }
   else
   {
-    <div class="bg-white shadow-sm rounded-2xl border border-gray-200 overflow-hidden">
-      <div class="p-6 md:p-8">
+    <div class="card p-6 md:p-8">
         <div class="flex flex-col md:flex-row items-center gap-6 mb-8 pb-8 border-b border-gray-100">
           <div class="relative group">
             <img src="@(string.IsNullOrEmpty(profile.AvatarUrl) ? "/favicon.png" : profile.AvatarUrl)"
@@ -57,7 +56,7 @@
             <h5 class="text-xl font-bold text-gray-900">@profile.DisplayName</h5>
             <p class="text-sm text-gray-500 mb-4 font-mono">@@@profile.Id</p>
             <div class="relative">
-              <label class="inline-flex items-center px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-lg transition-colors cursor-pointer border border-gray-200">
+              <label class="btn-secondary cursor-pointer">
                 <span>Change Photo</span>
                 <InputFile OnChange="HandleAvatarUpload" class="absolute inset-0 opacity-0 cursor-pointer"
                            accept="image/*" disabled="@isUploadingAvatar" />
@@ -70,24 +69,21 @@
           <DataAnnotationsValidator />
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Display Name</label>
-            <InputText class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
-                       @bind-Value="updateModel.DisplayName" />
+            <label class="label">Display Name</label>
+            <InputText class="input" @bind-Value="updateModel.DisplayName" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Bio</label>
-            <InputTextArea class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
-                           @bind-Value="updateModel.Bio" rows="3"
+            <label class="label">Bio</label>
+            <InputTextArea class="input" @bind-Value="updateModel.Bio" rows="3"
                            placeholder="Tell people a little about yourself..." />
           </div>
 
           <div class="flex justify-end pt-4">
-            <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-500/20 disabled:opacity-50" disabled="@isSaving">
+            <button type="submit" class="btn-primary px-8" disabled="@isSaving">
               @(isSaving ? "Saving..." : "Save Changes")
             </button>
           </div>
         </EditForm>
-      </div>
     </div>
   }
 </div>
