@@ -1,76 +1,99 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @inject ScobiusAuthStateProvider AuthProvider
 @inject IWebAuthService AuthService
 @inject NavigationManager Navigation
 
-<div class="app-shell">
-    <!-- Top navbar -->
-    <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/">Scobius</a>
+<div class="min-h-screen bg-gray-50 flex flex-col">
+  <!-- Top navbar -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a class="text-xl font-bold text-blue-600 tracking-tight" href="/">Scobius</a>
+      </div>
 
-            <div class="d-flex align-items-center gap-3 ms-auto">
-                <AuthorizeView>
-                    <Authorized>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-2"
-                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="small">Account</span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <button class="dropdown-item text-danger" @onclick="Logout">Logout</button>
-                                </li>
-                            </ul>
-                        </div>
-                    </Authorized>
-                    <NotAuthorized>
-                        <a href="/login" class="btn btn-sm btn-outline-primary">Sign in</a>
-                    </NotAuthorized>
-                </AuthorizeView>
-            </div>
-        </div>
-    </nav>
-
-    <div class="app-body d-flex">
-        <!-- Left sidebar (chat-app ready) -->
-        <aside class="sidebar border-end bg-light p-3 d-none d-md-flex flex-column" style="width: 240px; min-height: calc(100vh - 56px);">
-            <NavMenu />
-
-            <div class="mt-auto pt-3 border-top small text-muted">
-                <div class="fw-semibold mb-1">Friends</div>
-                <div class="text-muted" style="font-size: 0.8rem;">
-                    Connect with friends to start chatting.
+      <div class="flex items-center gap-4">
+        <AuthorizeView>
+          <Authorized>
+            <div class="relative">
+              <button class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      type="button" @onclick="ToggleDropdown">
+                <span>Account</span>
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              @if (isDropdownOpen)
+              {
+                <div class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-40">
+                  <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="/profile" @onclick="CloseDropdown">Profile</a>
+                  <div class="border-t border-gray-100 my-1"></div>
+                  <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50" @onclick="Logout">Logout</button>
                 </div>
-                <a href="/friends" class="small">View friends →</a>
+                
+                @* Invisible overlay to close dropdown on click outside *@
+                <div class="fixed inset-0 z-30" @onclick="CloseDropdown"></div>
+              }
             </div>
-        </aside>
-
-        <!-- Main content -->
-        <main class="flex-grow-1 p-3 p-md-4">
-            @Body
-        </main>
+          </Authorized>
+          <NotAuthorized>
+            <a href="/login" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">Sign in</a>
+          </NotAuthorized>
+        </AuthorizeView>
+      </div>
     </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Left sidebar -->
+    <aside class="w-60 border-r border-gray-200 bg-white p-4 hidden md:flex flex-col shrink-0 overflow-y-auto">
+      <NavMenu />
+
+      <div class="mt-auto pt-6 border-t border-gray-100">
+        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Friends</div>
+        <p class="text-xs text-gray-500 leading-relaxed mb-3">
+          Connect with friends to start chatting.
+        </p>
+        <a href="/friends" class="text-xs font-medium text-blue-600 hover:text-blue-700">View friends →</a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+      <div class="max-w-6xl mx-auto">
+        @Body
+      </div>
+    </main>
+  </div>
 </div>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+<div id="blazor-error-ui" class="fixed bottom-0 left-0 right-0 bg-red-600 text-white p-4 text-center hidden z-50" data-nosnippet>
+  An unhandled error has occurred.
+  <a href="." class="underline font-semibold ml-2">Reload</a>
+  <span class="absolute right-4 top-4 cursor-pointer" @onclick="DismissError">🗙</span>
 </div>
 
 @code {
-    private async Task Logout()
+  private bool isDropdownOpen;
+
+  private void ToggleDropdown() => isDropdownOpen = !isDropdownOpen;
+  private void CloseDropdown() => isDropdownOpen = false;
+
+  private void DismissError()
+  {
+      // Typically Blazor handles this by hiding the element via CSS class 'hidden' 
+      // which we added in Tailwind version.
+  }
+
+  private async Task Logout()
+  {
+    CloseDropdown();
+    try
     {
-        try
-        {
-            await AuthService.LogoutAsync();
-        }
-        catch { /* best effort */ }
-
-        Navigation.NavigateTo("/login", forceLoad: true);
+      await AuthService.LogoutAsync();
     }
-}
+    catch { /* best effort */ }
 
+    Navigation.NavigateTo("/login", forceLoad: true);
+  }
+}

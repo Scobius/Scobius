@@ -1,39 +1,20 @@
 @inherits LayoutComponentBase
 
-<div class="public-layout">
-    <header class="public-header py-3 border-bottom">
-        <div class="container d-flex align-items-center">
-            <a href="/" class="navbar-brand fw-bold text-decoration-none">Scobius</a>
-            <small class="text-muted ms-2 d-none d-sm-inline">Real-time chat</small>
+<div class="min-h-screen flex flex-col bg-gray-50">
+    <header class="bg-white border-b border-gray-200 py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+            <a href="/" class="text-xl font-bold text-blue-600 tracking-tight">Scobius</a>
+            <span class="ml-3 px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded-full hidden sm:inline">Real-time chat</span>
         </div>
     </header>
 
-    <main class="public-main d-flex align-items-center justify-content-center">
-        <div class="container" style="max-width: 480px;">
+    <main class="flex-1 flex items-center justify-center p-6">
+        <div class="w-full max-w-md">
             @Body
         </div>
     </main>
 
-    <footer class="text-center text-muted small py-3">
+    <footer class="py-6 text-center text-gray-400 text-sm">
         &copy; @DateTime.UtcNow.Year Scobius
     </footer>
 </div>
-
-<style>
-    .public-layout {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        background: #f8f9fa;
-    }
-    .public-header {
-        background: white;
-    }
-    .public-main {
-        flex: 1;
-    }
-    .public-layout .card {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
-        border: 1px solid #eee;
-    }
-</style>

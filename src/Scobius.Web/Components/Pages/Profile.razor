@@ -5,61 +5,89 @@
 
 <PageTitle>Profile — Scobius</PageTitle>
 
-<div>
-  <h3 class="mb-4 fw-bold">My Profile</h3>
+<div class="max-w-3xl">
+  <div class="mb-8">
+    <h3 class="text-2xl font-bold text-gray-900 tracking-tight">My Profile</h3>
+    <p class="text-sm text-gray-500 mt-1">Manage your public information and account settings.</p>
+  </div>
 
   @if (!string.IsNullOrEmpty(successMessage))
   {
-    <div class="alert alert-success py-2">@successMessage</div>
+    <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm">
+      <p class="font-medium">Success</p>
+      <p>@successMessage</p>
+    </div>
   }
   @if (!string.IsNullOrEmpty(errorMessage))
   {
-    <div class="alert alert-danger py-2">@errorMessage</div>
+    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+      <p class="font-medium">Error</p>
+      <p>@errorMessage</p>
+    </div>
   }
 
   @if (profile == null)
   {
-    <div class="d-flex justify-content-center py-5">
-      <div class="spinner-border text-primary"></div>
+    <div class="flex justify-center py-12">
+      <svg class="animate-spin h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
     </div>
   }
   else
   {
-    <div class="card shadow-sm p-4">
-      <div class="row align-items-center mb-4">
-        <div class="col-auto">
-          <img src="@(string.IsNullOrEmpty(profile.AvatarUrl) ? "/favicon.png" : profile.AvatarUrl)"
-               class="rounded-circle" style="width:90px;height:90px;object-fit:cover;" />
+    <div class="bg-white shadow-sm rounded-2xl border border-gray-200 overflow-hidden">
+      <div class="p-6 md:p-8">
+        <div class="flex flex-col md:flex-row items-center gap-6 mb-8 pb-8 border-b border-gray-100">
+          <div class="relative group">
+            <img src="@(string.IsNullOrEmpty(profile.AvatarUrl) ? "/favicon.png" : profile.AvatarUrl)"
+                 class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md ring-1 ring-gray-100" />
+            @if (isUploadingAvatar)
+            {
+              <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center">
+                <svg class="animate-spin h-6 w-6 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+            }
+          </div>
+          <div class="flex-1 text-center md:text-left">
+            <h5 class="text-xl font-bold text-gray-900">@profile.DisplayName</h5>
+            <p class="text-sm text-gray-500 mb-4 font-mono">@@@profile.Id</p>
+            <div class="relative">
+              <label class="inline-flex items-center px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-lg transition-colors cursor-pointer border border-gray-200">
+                <span>Change Photo</span>
+                <InputFile OnChange="HandleAvatarUpload" class="absolute inset-0 opacity-0 cursor-pointer"
+                           accept="image/*" disabled="@isUploadingAvatar" />
+              </label>
+            </div>
+          </div>
         </div>
-        <div class="col">
-          <h5 class="mb-0 fw-bold">@profile.DisplayName</h5>
-          <p class="text-muted small mb-1">@@<span>@profile.Id</span></p>
-          <InputFile OnChange="HandleAvatarUpload" class="form-control form-control-sm mt-1"
-                     accept="image/*" disabled="@isUploadingAvatar" />
-          @if (isUploadingAvatar)
-          {
-            <small class="text-muted">Uploading...</small>
-          }
-        </div>
+
+        <EditForm Model="updateModel" OnValidSubmit="HandleUpdate" class="space-y-6">
+          <DataAnnotationsValidator />
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Display Name</label>
+            <InputText class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
+                       @bind-Value="updateModel.DisplayName" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Bio</label>
+            <InputTextArea class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none" 
+                           @bind-Value="updateModel.Bio" rows="3"
+                           placeholder="Tell people a little about yourself..." />
+          </div>
+
+          <div class="flex justify-end pt-4">
+            <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-500/20 disabled:opacity-50" disabled="@isSaving">
+              @(isSaving ? "Saving..." : "Save Changes")
+            </button>
+          </div>
+        </EditForm>
       </div>
-
-      <EditForm Model="updateModel" OnValidSubmit="HandleUpdate">
-        <DataAnnotationsValidator />
-
-        <div class="mb-3">
-          <label class="form-label">Display Name</label>
-          <InputText class="form-control" @bind-Value="updateModel.DisplayName" />
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Bio</label>
-          <InputTextArea class="form-control" @bind-Value="updateModel.Bio" rows="3"
-                         placeholder="Tell people a little about yourself..." />
-        </div>
-
-        <button type="submit" class="btn btn-primary" disabled="@isSaving">
-          @(isSaving ? "Saving..." : "Save Changes")
-        </button>
-      </EditForm>
     </div>
   }
 </div>
@@ -72,7 +100,6 @@
   private bool isSaving;
   private bool isUploadingAvatar;
 
-  // OnAfterRenderAsync ensures the auth token is available before making API calls
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
     if (!firstRender) return;

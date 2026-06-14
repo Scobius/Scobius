@@ -12,4 +12,8 @@
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
     </ItemGroup>
 
+    <Target Name="BuildTailwind" BeforeTargets="Build">
+        <Exec Command="bun run css:build" WorkingDirectory="$(ProjectDir)" />
+    </Target>
+
 </Project>
