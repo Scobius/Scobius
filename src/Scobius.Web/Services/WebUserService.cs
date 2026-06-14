@@ -1,20 +1,15 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Scobius.Web.Providers;
 using Scobius.Web.Models;
+using Scobius.Web.Providers;
 
 namespace Scobius.Web.Services;
 
-public class WebUserService : IWebUserService
+public class WebUserService(HttpClient http, ScobiusAuthStateProvider authProvider)
+    : IWebUserService
 {
-    private readonly HttpClient _http;
-    private readonly ScobiusAuthStateProvider _authProvider;
-
-    public WebUserService(HttpClient http, ScobiusAuthStateProvider authProvider)
-    {
-        _http = http;
-        _authProvider = authProvider;
-    }
+    private readonly HttpClient _http = http;
+    private readonly ScobiusAuthStateProvider _authProvider = authProvider;
 
     // Build a fresh request with the auth header instead of mutating DefaultRequestHeaders
     private HttpRequestMessage AuthorizedRequest(HttpMethod method, string url)
@@ -52,3 +47,4 @@ public class WebUserService : IWebUserService
         return result?.AvatarUrl ?? string.Empty;
     }
 }
+

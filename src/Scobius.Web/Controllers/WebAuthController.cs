@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Scobius.Web.Models;
 
 namespace Scobius.Web.Controllers;
@@ -12,28 +12,25 @@ namespace Scobius.Web.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/web-auth")]
-public class WebAuthController : ControllerBase
+public class WebAuthController(IHttpClientFactory httpClientFactory) : ControllerBase
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public WebAuthController(IHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory;
-    }
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginPayload payload)
     {
-        if (string.IsNullOrWhiteSpace(payload.EmailOrUsername) || string.IsNullOrWhiteSpace(payload.Password))
+        if (
+            string.IsNullOrWhiteSpace(payload.EmailOrUsername)
+            || string.IsNullOrWhiteSpace(payload.Password)
+        )
             return BadRequest(new { error = "Email/username and password are required." });
 
         var apiClient = _httpClientFactory.CreateClient("ApiClient");
 
-        var response = await apiClient.PostAsJsonAsync("api/auth/login", new
-        {
-            EmailOrUsername = payload.EmailOrUsername,
-            Password = payload.Password
-        });
+        var response = await apiClient.PostAsJsonAsync(
+            "api/auth/login",
+            new { EmailOrUsername = payload.EmailOrUsername, Password = payload.Password }
+        );
 
         if (!response.IsSuccessStatusCode)
         {
@@ -48,13 +45,17 @@ public class WebAuthController : ControllerBase
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(result.AccessToken);
 
-            Response.Cookies.Append("Scobius-auth", result.AccessToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = jwt.ValidTo
-            });
+            Response.Cookies.Append(
+                "Scobius-auth",
+                result.AccessToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = jwt.ValidTo,
+                }
+            );
         }
 
         return Ok(result);

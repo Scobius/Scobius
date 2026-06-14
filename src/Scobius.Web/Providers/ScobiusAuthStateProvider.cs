@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace Scobius.Web.Providers;
 
-public class ScobiusAuthStateProvider : AuthenticationStateProvider
+public class ScobiusAuthStateProvider(ProtectedLocalStorage protectedLocalStorage)
+    : AuthenticationStateProvider
 {
-    private readonly ProtectedLocalStorage _protectedLocalStorage;
+    private readonly ProtectedLocalStorage _protectedLocalStorage = protectedLocalStorage;
     private string? _token;
     private bool _isInitialized;
 
@@ -16,11 +17,6 @@ public class ScobiusAuthStateProvider : AuthenticationStateProvider
 
     public bool IsInitialized => _isInitialized;
     public event Action? Initialized;
-
-    public ScobiusAuthStateProvider(ProtectedLocalStorage protectedLocalStorage)
-    {
-        _protectedLocalStorage = protectedLocalStorage;
-    }
 
     public async Task InitializeAsync()
     {

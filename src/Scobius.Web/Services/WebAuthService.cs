@@ -3,16 +3,11 @@ using Scobius.Web.Providers;
 
 namespace Scobius.Web.Services;
 
-public class WebAuthService : IWebAuthService
+public class WebAuthService(HttpClient http, ScobiusAuthStateProvider authProvider)
+    : IWebAuthService
 {
-    private readonly HttpClient _http;
-    private readonly ScobiusAuthStateProvider _authProvider;
-
-    public WebAuthService(HttpClient http, ScobiusAuthStateProvider authProvider)
-    {
-        _http = http;
-        _authProvider = authProvider;
-    }
+    private readonly HttpClient _http = http;
+    private readonly ScobiusAuthStateProvider _authProvider = authProvider;
 
     public async Task<AuthResult> LoginAsync(string emailOrUsername, string password)
     {
