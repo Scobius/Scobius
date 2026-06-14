@@ -7,4 +7,5 @@ public interface IWebUserService
     Task<UserProfileModel?> GetProfileAsync();
     Task UpdateProfileAsync(string? displayName, string? bio);
     Task<string> UpdateAvatarAsync(MultipartFormDataContent content);
+    Task<FetchFriendsResult> GetFriends();
 }

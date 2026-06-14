@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using Scobius.Web.Models;
 using Scobius.Web.Providers;
 
@@ -46,5 +45,26 @@ public class WebUserService(HttpClient http, ScobiusAuthStateProvider authProvid
         var result = await response.Content.ReadFromJsonAsync<AvatarUpdateResult>();
         return result?.AvatarUrl ?? string.Empty;
     }
-}
 
+    public async Task<FetchFriendsResult> GetFriends()
+    {
+        var request = AuthorizedRequest(HttpMethod.Get, "api/friendship/friends");
+
+        var response = await _http.SendAsync(request);
+
+        FetchFriendsResult result = new();
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            result.Success = false;
+            result.Error = error;
+        }
+        else
+        {
+            var friends = await response.Content.ReadFromJsonAsync<UserInfoModel[]>();
+            result.Friends = friends!;
+        }
+
+        return result;
+    }
+}
